@@ -31,4 +31,4 @@ app.use(ensureAuth);
 app.use(express.json());
 app.use(router);
 
-app.listen(process.env.PORT, () => console.log("SERVER IS RUNNING ON PORT 4003"));
+app.listen(process.env.PORT || 4003, () => console.log("SERVER IS RUNNING ON PORT 4003"));
