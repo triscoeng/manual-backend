@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Usuarios {
+  id           String @id @default(uuid())
+  usuario      String @unique
+  nomeUsuario  String
+  senhaUsuario String
+  email        String
+
+  @@map("usuarios")
+}
+
+model Construtoras {
+  id              String            @id @default(uuid())
+  nome            String            @unique
+  nomeContato     String
+  email           String
+  telefone        Decimal
+  Empreendimentos Empreendimentos[]
+
+  @@map("construtoras")
+}
+
+model Empreendimentos {
+  id                 String       @id @default(uuid())
+  nomeEmpreendimento String
+  cep                Int
+  idConstrutora      String
+  construtora        Construtoras @relation(fields: [idConstrutora], references: [id], onDelete: Cascade)
+  Arquivos           Arquivos[]
+
+  @@map("empreendimentos")
+}
+
+model Arquivos {
+  id                 String          @id @default(uuid())
+  nomeArquivo        String
+  hash               String
+  idEmpreendimento   String
+  empreendimento     Empreendimentos @relation(fields: [idEmpreendimento], references: [id], onDelete: Cascade)
+  quantidadeDownload Int             @default(0)
+
+  @@map("arquivos")
+}
