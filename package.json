@@ -24,7 +24,8 @@
     "nodemon": "^2.0.19"
   },
   "scripts": {
-    "start": "pm2 start ts-node -- -P ecosystem.config.json ./src/server.ts --watch",
-    "nodemon": "nodemon ./src/server.ts"
+    "start": "pm2 start ./dist/server.js --watch",
+    "nodemon": "nodemon ./src/server.ts",
+    "build": "tsc"
   }
 }

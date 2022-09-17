@@ -5,8 +5,9 @@
     "strict": true,
     "lib": [
       "esnext",
-      "ES7"
+      "ES2020"
     ],
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "module": "CommonJS"
   }
 }
