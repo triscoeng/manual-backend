@@ -24,7 +24,7 @@
     "nodemon": "^2.0.19"
   },
   "scripts": {
-    "start": "pm2 start ./dist/server.js --watch",
+    "start": "pm2-runtime start ecosystem.config.js --env production",
     "nodemon": "nodemon ./dist/server.js",
     "build": "tsc"
   }

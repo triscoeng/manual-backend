@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: "backend",
-      script: "./src/server.ts",
-      instances: "1x",
+      script: "./dist/server.js",
+      instances: "max",
       env: {
         NODE_ENV: "development",
       },

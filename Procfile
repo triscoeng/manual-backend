@@ -1,1 +1,1 @@
-web: pm2 start ./dist/server.js --watch
+web: npm run start
