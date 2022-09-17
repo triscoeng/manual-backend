@@ -1,1 +1,1 @@
-web: pm2 start ts-node -- -P ecosystem.config.json ./src/server.ts --watch
+web: pm2 start ./dist/server.js --watch
