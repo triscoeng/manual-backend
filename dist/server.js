@@ -34,5 +34,5 @@ app.use(cors_1.headerConfig);
 app.use(authentication_1.ensureAuth);
 app.use(express_1["default"].json());
 app.use(routes_1.router);
-app.listen(process.env.PORT || 4003, function () { return console.log("SERVER IS RUNNING ON PORT 4003"); });
+app.listen(process.env.PORT || 4003, function () { return console.log("SERVER IS RUNNING ON PORT" + process.env.PORT); });
 //# sourceMappingURL=server.js.map
