@@ -25,7 +25,7 @@
   },
   "scripts": {
     "start": "pm2 start ./dist/server.js --watch",
-    "nodemon": "nodemon ./src/server.ts",
+    "nodemon": "nodemon ./dist/server.js",
     "build": "tsc"
   }
 }
