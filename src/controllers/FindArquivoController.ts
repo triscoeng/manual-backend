@@ -1,10 +1,10 @@
-import { ErrorRequestHandler, Request, Response } from "express";
+import { Request, Response } from "express";
 import { prismaClient } from "../database/prismaClient";
 
 export class FindArquivoController {
   async getAll(req: Request, res: Response) {
     try {
-      const list = await prismaClient.arquivos.findMany({
+      await prismaClient.arquivos.findMany({
         include: {
           empreendimento: {
             include: {
@@ -12,8 +12,9 @@ export class FindArquivoController {
             }
           }
         }
+      }).then(response => {
+        res.status(200).json(response)
       })
-      res.status(200).json(list)
     } catch (error: any) {
       res.status(400).send(error)
     }

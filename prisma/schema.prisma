@@ -39,6 +39,7 @@ model Empreendimentos {
   idConstrutora      String
   construtora        Construtoras @relation(fields: [idConstrutora], references: [id], onDelete: Cascade)
   Arquivos           Arquivos[]
+  QRCode             QRCode[]
 
   @@map("empreendimentos")
 }
@@ -52,4 +53,15 @@ model Arquivos {
   quantidadeDownload Int             @default(0)
 
   @@map("arquivos")
+}
+
+model QRCode {
+  id               String          @id @default(uuid())
+  url              String
+  created_at       DateTime        @default(now())
+  updated_at       DateTime        @updatedAt
+  idEmpreendimento String
+  empreendimento   Empreendimentos @relation(fields: [idEmpreendimento], references: [id])
+
+  @@map("qrcode")
 }
