@@ -3,27 +3,27 @@ import { prismaClient } from "../database/prismaClient";
 
 export class DownloadArquivoController {
   async handle(req: Request, res: Response) {
-    const { id, hash }: any = req.query;
+    const { id }: any = req.query;
+    console.log(id)
 
-    await prismaClient.arquivos
+    await prismaClient.qRCode
       .findFirst({
         where: {
-          id: id,
-          hash: hash,
-        },
+          id: id
+        }
       })
-      .then(async (r: any) => {
-        await prismaClient.arquivos.update({
-          data: { quantidadeDownload: r.quantidadeDownload + 1 },
-          where: {
-            id: r.id,
+      .then(async ({ id, url, view_count }: any) => {
+        await prismaClient.qRCode.update({
+          data: {
+            view_count: view_count + 1
           },
-        });
-        res
-          .status(200)
-          .send(
-            "http://www.triscoengenharia.com.br/_manuais/" + r?.nomeArquivo
-          );
+          where: {
+            id: id
+          }
+        })
+          .then((r) => {
+            return res.status(200).send(url)
+          })
       })
       .catch((err) => {
         res.status(400).send(err.message);

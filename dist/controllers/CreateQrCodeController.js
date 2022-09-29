@@ -35,78 +35,92 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 exports.__esModule = true;
-exports.FindArquivoController = void 0;
+exports.CreateQrCodeController = void 0;
 var prismaClient_1 = require("../database/prismaClient");
-var FindArquivoController = /** @class */ (function () {
-    function FindArquivoController() {
+var CreateQrCodeController = /** @class */ (function () {
+    function CreateQrCodeController() {
     }
-    FindArquivoController.prototype.getAll = function (req, res) {
+    CreateQrCodeController.prototype.create = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var error_1;
+            var data, query;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, prismaClient_1.prismaClient.arquivos.findMany({
-                                include: {
-                                    empreendimento: {
-                                        include: {
-                                            construtora: true
-                                        }
-                                    }
+                        data = req.body;
+                        return [4 /*yield*/, prismaClient_1.prismaClient.qRCode
+                                .create({
+                                data: {
+                                    url: data.url,
+                                    idEmpreendimento: data.idEmpreendimento
                                 }
-                            }).then(function (response) {
-                                res.status(200).json(response);
+                            })
+                                .then(function (result) {
+                                return res.status(200).json(result);
+                            })["catch"](function (error) {
+                                return res.status(400).send(error);
+                            })];
+                    case 1:
+                        query = _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    CreateQrCodeController.prototype["delete"] = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var id;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        id = req.body;
+                        return [4 /*yield*/, prismaClient_1.prismaClient.qRCode["delete"]({ where: { id: id } })
+                                .then(function (result) {
+                                res.status(200).send(true);
+                            })["catch"](function (error) {
+                                res.status(400).send(error);
                             })];
                     case 1:
                         _a.sent();
-                        return [3 /*break*/, 3];
-                    case 2:
-                        error_1 = _a.sent();
-                        res.status(400).send(error_1);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        return [2 /*return*/];
                 }
             });
         });
     };
-    FindArquivoController.prototype.getById = function (req, res) {
+    CreateQrCodeController.prototype.edit = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var id, search, error_2;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var _a, id, data, query;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        id = req.params.id;
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, prismaClient_1.prismaClient.arquivos.findUnique({
+                        _a = req.body, id = _a.id, data = __rest(_a, ["id"]);
+                        return [4 /*yield*/, prismaClient_1.prismaClient.qRCode.update(({
+                                data: data,
                                 where: {
                                     id: id
-                                },
-                                include: {
-                                    empreendimento: {
-                                        include: {
-                                            construtora: true
-                                        }
-                                    }
                                 }
-                            })];
-                    case 2:
-                        search = _a.sent();
-                        res.status(200).json(search);
-                        return [3 /*break*/, 4];
-                    case 3:
-                        error_2 = _a.sent();
-                        res.status(400).send(error_2);
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/];
+                            })).then(function (result) {
+                                return res.status(202).json(result);
+                            })["catch"](function (error) { return res.status(400).send(false); })];
+                    case 1:
+                        query = _b.sent();
+                        return [2 /*return*/];
                 }
             });
         });
     };
-    return FindArquivoController;
+    return CreateQrCodeController;
 }());
-exports.FindArquivoController = FindArquivoController;
-//# sourceMappingURL=FindArquivoController.js.map
+exports.CreateQrCodeController = CreateQrCodeController;
+//# sourceMappingURL=CreateQrCodeController.js.map

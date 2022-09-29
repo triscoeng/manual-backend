@@ -23,13 +23,15 @@ import {
 } from "./controllers/UsuarioController";
 import { DownloadArquivoController } from "./controllers/DownloadArquivoController";
 import { FindArquivoController } from "./controllers/FindArquivoController";
+import { CreateQrCodeController } from "./controllers/CreateQrCodeController";
+import Path from "path";
 
 const router = Router();
 const storage = diskStorage({
   filename: (req, file, cb) => {
     cb(
       null,
-      file.originalname.toLowerCase().replace(/[^A-Z0-9]+/gi, "_") + ".pdf"
+      Path.parse(file.originalname).name.toLowerCase().replace(/[^A-Z0-9]+/gi, "_") + Path.parse(file.originalname).ext
     );
   },
 });
@@ -85,7 +87,6 @@ const findArquivo = new FindArquivoController();
 
 router.post("/arquivo/add", upload.array("files"), criarArquivo.handle);
 router.delete("/arquivo/:id", deletarArquivo.handle);
-router.get("/download", downloadArquivo.handle);
 router.get("/arquivos", findArquivo.getAll)
 router.get("/arquivo/:id", findArquivo.getById)
 
@@ -103,5 +104,22 @@ router.post("/teste", upload.array("files"), (req: Request, res: Response) => {
   console.log(req.body);
   console.log(req.files);
 });
+
+
+//////////
+//QRCODE//
+//////////
+
+const qrCodeClass = new CreateQrCodeController();
+
+router.get("/qrcode/:id", qrCodeClass.view)
+router.get("/qrcode/", qrCodeClass.view)
+router.post("/qrcode/", qrCodeClass.create)
+router.put("/qrcode/:id", qrCodeClass.edit)
+router.delete("/qrcode/:id", qrCodeClass.delete)
+router.get("/download", downloadArquivo.handle);
+
+
+
 
 export { router };

@@ -7,7 +7,7 @@ export async function ensureAuth(req: any, res: Response, next: NextFunction) {
   if (
     req.url === "/login" ||
     req.url === "/login/verify" ||
-    req._parsedUrl.pathname === "/download"
+    req._parsedUrl.path.includes("download")
   ) {
     return next();
   }

@@ -39,6 +39,7 @@ var CreateArquivoController_1 = require("./controllers/CreateArquivoController")
 var UsuarioController_1 = require("./controllers/UsuarioController");
 var DownloadArquivoController_1 = require("./controllers/DownloadArquivoController");
 var FindArquivoController_1 = require("./controllers/FindArquivoController");
+var CreateQrCodeController_1 = require("./controllers/CreateQrCodeController");
 var router = (0, express_1.Router)();
 exports.router = router;
 var storage = (0, multer_1.diskStorage)({
@@ -99,4 +100,11 @@ router.post("/teste", upload.array("files"), function (req, res) {
     console.log(req.body);
     console.log(req.files);
 });
+//////////
+//QRCODE//
+//////////
+var qrCodeClass = new CreateQrCodeController_1.CreateQrCodeController();
+router.post("/qrcode/cadastrar", qrCodeClass.create);
+router.put("/qrcode/:id", qrCodeClass.edit);
+router["delete"]("/qrcode/:id", qrCodeClass["delete"]);
 //# sourceMappingURL=routes.js.map

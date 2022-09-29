@@ -57,11 +57,12 @@ model Arquivos {
 
 model QRCode {
   id               String          @id @default(uuid())
+  idEmpreendimento String
   url              String
   created_at       DateTime        @default(now())
   updated_at       DateTime        @updatedAt
-  idEmpreendimento String
-  empreendimento   Empreendimentos @relation(fields: [idEmpreendimento], references: [id])
+  empreendimento   Empreendimentos @relation(fields: [idEmpreendimento], references: [id], onDelete: Cascade)
+  view_count       Int             @default(0)
 
   @@map("qrcode")
 }
