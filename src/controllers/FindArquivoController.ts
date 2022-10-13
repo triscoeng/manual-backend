@@ -3,17 +3,48 @@ import { prismaClient } from "../database/prismaClient";
 
 export class FindArquivoController {
   async getAll(req: Request, res: Response) {
+    console.log(req.query)
+    const { construtora, empreendimento }: any = req.query
     try {
       await prismaClient.arquivos.findMany({
         include: {
           empreendimento: {
-            include: {
-              construtora: true
+            select: {
+              id: true,
+              nomeEmpreendimento: true,
+              construtora: {
+                select: {
+                  id: true,
+                  nome: true
+                }
+              }
+            }
+          }
+        },
+        where: {
+          empreendimento: {
+            id: empreendimento,
+            construtora: {
+              id: construtora
             }
           }
         }
-      }).then(response => {
-        res.status(200).json(response)
+      }).then(async (response: any) => {
+        const temp = response.map((one: any) => ({
+          id: one.id,
+          nomeArquivo: one.nomeArquivo,
+          hash: one.hash,
+          quantidadeDownload: one.quantidadeDownload,
+          empreendimento: {
+            label: one.empreendimento.nomeEmpreendimento,
+            value: one.empreendimento.id
+          },
+          construtora: {
+            label: one.empreendimento.construtora.nome,
+            value: one.empreendimento.construtora.id
+          }
+        }))
+        res.status(200).json(temp)
       })
     } catch (error: any) {
       res.status(400).send(error)

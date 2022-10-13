@@ -25,6 +25,7 @@ import { DownloadArquivoController } from "./controllers/DownloadArquivoControll
 import { FindArquivoController } from "./controllers/FindArquivoController";
 import { CreateQrCodeController } from "./controllers/CreateQrCodeController";
 import Path from "path";
+import HomeData from "./controllers/HomeController";
 
 const router = Router();
 const storage = diskStorage({
@@ -47,8 +48,8 @@ const deleteConstrutora = new DeleteConstrutoraController();
 const editConstrutora = new EditConstrutoraController();
 
 router.post("/construtora/add", createConstrutora.handle);
-router.get("/construtoras/", findAllConstrutora.handle);
-router.get("/construtoras/names", findAllConstrutora.handleOnlyName);
+router.get("/construtoras?", findAllConstrutora.handle);
+router.get("/construtoras/list", findAllConstrutora.handleOnlyName);
 router.get("/construtora/:id", findConstrutoraById.handle);
 router.delete("/construtora/:id", deleteConstrutora.handle);
 router.put("/construtora/edit", editConstrutora.handle);
@@ -113,12 +114,15 @@ router.post("/teste", upload.array("files"), (req: Request, res: Response) => {
 const qrCodeClass = new CreateQrCodeController();
 
 router.get("/qrcode/:id", qrCodeClass.view)
-router.get("/qrcode/", qrCodeClass.view)
+router.get("/qrcode", qrCodeClass.view)
 router.post("/qrcode/", qrCodeClass.create)
 router.put("/qrcode/:id", qrCodeClass.edit)
 router.delete("/qrcode/:id", qrCodeClass.delete)
 router.get("/download", downloadArquivo.handle);
 
+const homeInfo = new HomeData()
+
+router.get("/home", homeInfo.handle)
 
 
 

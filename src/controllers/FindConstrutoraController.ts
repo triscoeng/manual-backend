@@ -19,18 +19,48 @@ export class FindConstrutoraByIdController {
 
 export class FindAllConstrutoraController {
   async handle(req: Request, res: Response) {
+    const { construtora }: any = req.query
     const data = await prismaClient.construtoras.findMany({
       include: {
-        Empreendimentos: true,
+        Empreendimentos: {
+          select: {
+            id: true,
+            nomeEmpreendimento: true,
+            Arquivos: true,
+            QRCode: true,
+          }
+        }
       },
+      where: {
+        id: construtora
+      }
     });
-    return res.json(data);
+
+    return res.status(200).json(data);
   }
 
   async handleOnlyName(req: Request, res: Response) {
     const data = await prismaClient.construtoras.findMany({
-      select: { nome: true, id: true },
+      select: {
+        nome: true,
+        id: true,
+        Empreendimentos: {
+          select: {
+            id: true,
+            nomeEmpreendimento: true,
+            Arquivos: true,
+            QRCode: true
+          }
+        }
+      },
     });
-    res.status(200).json(data);
+    const mask = data.map((single: any) => ({
+      label: single.nome,
+      value: single.id,
+      empreendimentos: single.Empreendimentos.map((emp: any) => (
+        { label: emp.nomeEmpreendimento, value: emp.id, arquivos: emp.Arquivos, qrcodes: emp.QRCode }
+      ))
+    }))
+    res.status(200).json(mask);
   }
 }

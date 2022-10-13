@@ -4,6 +4,7 @@ import { prismaClient } from "../database/prismaClient";
 export class CreateQrCodeController {
   async view(req: Request, res: Response) {
 
+    const { construtora, empreendimento }: any = req.query
     const isParamTrue = Object.keys(req.params)
     const client = prismaClient.qRCode
 
@@ -17,9 +18,29 @@ export class CreateQrCodeController {
                 Arquivos: true
               }
             }
+          },
+          where: {
+            empreendimento: {
+              id: empreendimento,
+              idConstrutora: construtora
+            }
           }
         })
-        res.status(200).json(list)
+        const mask = list.map((single: any) => ({
+          id: single.id,
+          url: single.url,
+          count: single.view_count,
+          empreendimento: {
+            label: single.empreendimento.nomeEmpreendimento,
+            value: single.empreendimento.id
+          },
+          construtora: {
+            label: single.empreendimento.construtora.nome,
+            value: single.empreendimento.construtora.id
+          },
+          arquivos: single.empreendimento.Arquivos
+        }))
+        res.status(200).json(mask)
         break;
 
       default:
