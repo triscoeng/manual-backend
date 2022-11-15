@@ -3,18 +3,25 @@ import { prismaClient } from "../database/prismaClient";
 import bcrypt from "bcryptjs";
 import jwt, { SignOptions } from "jsonwebtoken";
 
+const xablauPassword = (string: string) => {
+  const salt = bcrypt.genSaltSync(10)
+  const password = bcrypt.hashSync(string, salt)
+  return password
+}
+
 export class CreateUsuarioController {
   async handle(req: Request, res: Response) {
     const data = req.body;
 
     bcrypt.genSalt(10, (err, salt) => {
-      if (err) res.status(401).end();
+      if (err) res.status(401).send(err);
       bcrypt.hash(data.senha, salt, async (err, hash) => {
-        if (err) return res.status(401).end();
+        console.log(err)
+        if (err) return res.status(400).json(err);
 
         await prismaClient.usuarios.create({
           data: {
-            usuario: data.usuario,
+            usuario: data.usuario.toLowerCase(),
             nomeUsuario: data.nomeUsuario,
             email: data.email,
             senhaUsuario: hash,
@@ -28,27 +35,35 @@ export class CreateUsuarioController {
 
 export class LoginUsuarioController {
   async handle(req: Request, res: Response) {
-    const loginData = req.body;
+    const { usuario, senha }: any = req.body;
 
-    if (!loginData.senha || !loginData.usuario || loginData.senha === null) {
-      return res.status(400).send(false);
+    if (!senha || !usuario) {
+      return res.status(400).json({ logged: false, data: "Usuário ou Senha em Branco" });
     }
 
-    const { senhaUsuario, ...user }: any =
-      await prismaClient.usuarios.findUnique({
-        where: { usuario: loginData.usuario },
+    const userDb = await prismaClient.usuarios.findUnique({
+      where: {
+        usuario: usuario.toLowerCase()
+      }
+    })
+
+    if (!userDb) {
+      res.status(400).json({ logged: false, data: "Usuário não encontrado" })
+    } else {
+      bcrypt.compare(senha, userDb.senhaUsuario, async (err, status) => {
+        console.log(status)
+        if (!status) return res.status(401).send({ logged: false, data: "Senha Incorreta" });
+
+        const sauce: any = process.env.saucePassword;
+        const token = jwt.sign({ logged: true, data: userDb }, sauce, {
+          expiresIn: 30000,
+        });
+        const resposta = jwt.decode(token);
+        res.status(200).json({ token: token, data: resposta });
       });
 
-    bcrypt.compare(loginData.senha, senhaUsuario, async (err, next) => {
-      if (!next) return res.status(401).send({ logged: false, data: null });
+    }
 
-      const sauce: any = process.env.saucePassword;
-      const token = jwt.sign({ logged: true, data: user }, sauce, {
-        expiresIn: 30000,
-      });
-      const resposta = jwt.decode(token);
-      res.status(200).json({ token: token, data: resposta });
-    });
   }
 }
 
@@ -69,9 +84,39 @@ export class VerifyUsuarioController {
 }
 
 export class UpdateUsuarioController {
-  async handle(req: Request, res: Response) {}
+  async handle(req: Request, res: Response) {
+    const { senha, usuario, ...data } = req.body
+    const id = req.params.id
+
+    if (senha) {
+      data.senhaUsuario = xablauPassword(senha)
+    }
+
+
+    const update = await prismaClient.usuarios.update({
+      where: {
+        id: id
+      },
+      data: {
+        ...data
+      }
+    })
+
+    res.status(200).send(update)
+  }
 }
 
 export class DeleteUsuarioController {
-  async handle(req: Request, res: Response) {}
+  async handle(req: Request, res: Response) {
+    const { id } = req.params
+
+    const deleted = await prismaClient.usuarios.delete({
+      where: {
+        id: id
+      }
+    })
+
+    if (!deleted) res.status(400).json(false)
+    res.status(200).json(true)
+  }
 }

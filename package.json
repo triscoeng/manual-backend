@@ -25,6 +25,7 @@
   },
   "scripts": {
     "start": "pm2-runtime start ecosystem.config.js --env production",
+    "serve": "tsc -w & pm2 start dist/server.js --watch",
     "nodemon": "nodemon ./src/server.ts",
     "build": "tsc"
   }

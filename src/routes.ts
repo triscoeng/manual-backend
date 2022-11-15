@@ -18,7 +18,9 @@ import { DeleteArquivoController } from "./controllers/DeleteArquivoController";
 import { CreateSingleArquivoController } from "./controllers/CreateArquivoController";
 import {
   CreateUsuarioController,
+  DeleteUsuarioController,
   LoginUsuarioController,
+  UpdateUsuarioController,
   VerifyUsuarioController,
 } from "./controllers/UsuarioController";
 import { DownloadArquivoController } from "./controllers/DownloadArquivoController";
@@ -99,6 +101,8 @@ const loginUsuario = new LoginUsuarioController();
 const verifyUsuario = new VerifyUsuarioController();
 
 router.post("/usuario/", createUsuario.handle);
+router.put("/usuario/:id", new UpdateUsuarioController().handle);
+router.delete("/usuario/:id", new DeleteUsuarioController().handle);
 router.post("/login/", loginUsuario.handle);
 router.get("/login/verify", verifyUsuario.handle);
 router.post("/teste", upload.array("files"), (req: Request, res: Response) => {
